@@ -1,65 +1,84 @@
 import numpy as np
 import math as m
 from random import choice,randint
-from copy import deepcopy
+from copy import copy,deepcopy
 from time import time,sleep
 
 def init(n_in):
-	vs = [chr(ord('a')+i) for i in range(n_in)]
-	rep = {'ins':vs,'vars':deepcopy(vs),'code':[]}
+	ins = [chr(ord('a')+i) for i in range(n_in)]
+	vs = [chr(ord('a')+i) for i in range(26)]
+	rep = {'ins':ins,'vars':vs,'code':[['NOP'] for i in range(13)]}
 	return rep
 
 def cost(X,Y,rep):
 	exec(render(rep))
 	h = np.array([f(*x) for x in X])
+	# print h.shape
 	err = np.mean(np.abs(Y-h))
 	return err
 
 def gen_code(rep):
+	idx = choice(range(len(rep['code'])))
 	op = choice(ops)
-	new_var = chr(ord(max(rep['vars']))+1)
+	target = choice(rep['vars'][len(rep['ins']):])
+	v1 = choice(rep['vars'])
 	if op[0] == 'm':
-		code = [new_var,op,choice(rep['vars'])]
+		code = [target,op,v1]
 	else:
-		v1,v2 = choice(rep['vars']),choice(rep['vars'])
-		# v1,v2 = np.random.choice(rep['vars'],size=2)
-		code = [new_var,op,v1,v2]
-	rep['code'].append(code)
-	rep['vars'].append(new_var)
+		v2 = choice(rep['vars'])
+		code = [target,op,v1,v2]
+	rep['code'][idx] = code 
 	return rep
 
-def valid_var_swap_idxs(code):
+def valid_order_swap_idxs(code):
 	valid = []
 	for i,c in enumerate(code):
-		if len(c) != 3 and c[1] not in ['+','*']:
-			valid.append(i)
+		if len(c) != 3 and c != ['NOP']:
+			if c[1] not in ['+','*']:
+				valid.append(i)
 	return valid
 
 def var_swap(rep):
-	idxs = [i for i in range(len(rep['code'])) if len(rep['code'][i]) != 3]
-	idx = choice(idxs)
-	max_var_idx = idx+len(rep['ins'])
-	vs = rep['vars'][:max_var_idx]
-	v_to_swap_idx = randint(0,1)
-	v_to_swap = rep['code'][idx][v_to_swap_idx+2]
-	vs.remove(rep['code'][idx][v_to_swap_idx+2])
-	rep['code'][idx][v_to_swap_idx+2] = choice(vs)
+	idxs = [i for i in range(len(rep['code'])) if len(rep['code'][i]) != 3 and rep['code'][i] != ['NOP']]
+	if len(idxs) > 0:
+		idx = choice(idxs)
+		vs = copy(rep['vars'])
+		v_to_swap_idx = randint(0,1)
+		v_to_swap = rep['code'][idx][v_to_swap_idx+2]
+		vs.remove(rep['code'][idx][v_to_swap_idx+2])
+		rep['code'][idx][v_to_swap_idx+2] = choice(vs)
 	return rep
 
 def order_swap(rep):
-	idxs = valid_var_swap_idxs(rep['code'])
-	idx = choice(idxs)
-	tmp = rep['code'][idx][2]
-	rep['code'][idx][2] = rep['code'][idx][3]
-	rep['code'][idx][3] = tmp
+	idxs = valid_order_swap_idxs(rep['code'])
+	if len(idxs) > 0:
+		idx = choice(idxs)
+		tmp = rep['code'][idx][2]
+		rep['code'][idx][2] = rep['code'][idx][3]
+		rep['code'][idx][3] = tmp
 	return rep
 
-# def delete_code():
+def op_swap(rep):
+	idxs = [i for i in range(len(rep['code'])) if len(rep['code'][i]) != 3 and rep['code'][i] != ['NOP']]
+	if len(idxs) > 0:
+		idx = choice(idxs)
+		rep['code'][idx][1] = choice(ops[1:])
+	return rep
+
+def delete_code(rep):
+	# idxs = [i for i in range(len(rep['code'])) if rep['code'][i] != ['NOP']]
+	# if len(idxs) > 0:
+	idxs = range(len(rep['code']))
+	idx = choice(idxs)
+	rep['code'][idx] = ['NOP']
+	return rep
 
 def neighbor(rep):
 	return choice(moves)(rep)
 
 def render_code(rep):
+	if rep == ['NOP']:
+		return '\n'
 	if len(rep) == 3:
 		code = '    %s = %s(%s)\n'%tuple(rep)
 	else:
@@ -71,12 +90,19 @@ def render(rep):
 		head = 'def f(%s):\n'%rep['ins'][0]
 	else:
 		head = 'def f(%s,%s):\n'%(rep['ins'][0],','.join(rep['ins'][1:]))
+	# vinit = '    %s = %s'%(','.join(rep['vars'][len(rep['ins']):]),','.join(['0' for _ in range(len(rep['vars'])-len(rep['ins']))]))
+	vs = ','.join(rep['vars'][len(rep['ins']):])
+	vals = ','.join(['copy(%s)'%choice(rep['ins']) for _ in range(len(rep['vars'])-len(rep['ins']))])	
+	# vals = ','.join([choice(rep['ins']) for _ in range(len(rep['vars'])-len(rep['ins']))])	
+	vinit = '    %s = %s'%(vs,vals)
 	body = ''.join([render_code(code) for code in rep['code']])
 	end = '    return %s'%max(rep['vars'])
-	return head+body+end
+	return head+vinit+body+end
 
 ops = ['m.sqrt','+','-','*']
-moves = [gen_code,var_swap,order_swap]
+moves = [gen_code,var_swap,order_swap,op_swap,delete_code]
+
+# init(4)
 
 exec("""
 def distance(x1, y1, x2, y2):
@@ -103,7 +129,7 @@ rep = {'ins':['a','b','c','d'],
 	['h','*','f','f'],
 	['i','+','g','h'],
 	['j','m.sqrt','i']]}
-
+	
 rep = init(4)
 X = np.random.randint(-10,10,size=(100,4))
 Y = np.array([distance(*x) for x in X])
@@ -113,8 +139,8 @@ cmin = np.inf
 repmin = deepcopy(rep)
 t = time()
 n = 0
-for starts in range(100000):
-	if starts % 1000 == 0 and starts != 0: print starts,n/(time()-t)
+for starts in range(10000):
+	if starts % 100 == 0 and starts != 0: print starts,n/(time()-t)
 	rep = init(4)
 	for i in range(30):
 		try:
