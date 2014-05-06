@@ -1,13 +1,13 @@
 import numpy as np
 
 def f(x):
-	return x * 100
+	return x * -100
 
 def h(x,n):
 	return x * n
 
 def cost(a,b):
-	return np.mean(np.square(a-b))
+	return np.mean(a-b)
 
 def learn(x,f):
 	y = f(x)
@@ -18,8 +18,13 @@ def learn(x,f):
 		if err > 0:
 			n += 1
 		if err < 0:
-			n += 1
+			n -= 1
+		print n,err
 	print 'solution',n
 
-x = np.arange(10)
-learn(x,f)
+def main():
+	x = np.arange(10)
+	learn(x,f)
+
+if __name__ == "__main__":
+	main()

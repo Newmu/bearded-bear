@@ -75,10 +75,11 @@ def render(rep):
 	end = '    return %s'%max(rep['vars'])
 	return head+body+end
 
-ops = ['m.sqrt','+','-','*']
-moves = [gen_code,var_swap,order_swap]
+def main():
+	ops = ['m.sqrt','+','-','*']
+	moves = [gen_code,var_swap,order_swap]
 
-exec("""
+	exec("""
 def distance(x1, y1, x2, y2):
 	dx = x2 - x1
 	dy = y2 - y1
@@ -87,51 +88,55 @@ def distance(x1, y1, x2, y2):
 	return result
 	""")
 
-exec("""
+	exec("""
 def squared_error(a, b):
 	c = a - b
 	d = c ** 2
 	return d
 	""")
 
-rep = {'ins':['a','b'],'vars':['a','b','c'],'code':[('c','+','a','b')]}
-rep = {'ins':['a','b','c','d'],
-	'vars':['a','b','c','d','e','f','g','h','i','j'],
-	'code':[['e','-','c','a'],
-	['f','-','d','b'],
-	['g','*','e','e'],
-	['h','*','f','f'],
-	['i','+','g','h'],
-	['j','m.sqrt','i']]}
+	rep = {'ins':['a','b'],'vars':['a','b','c'],'code':[('c','+','a','b')]}
+	rep = {'ins':['a','b','c','d'],
+		'vars':['a','b','c','d','e','f','g','h','i','j'],
+		'code':[['e','-','c','a'],
+		['f','-','d','b'],
+		['g','*','e','e'],
+		['h','*','f','f'],
+		['i','+','g','h'],
+		['j','m.sqrt','i']]}
 
-rep = init(4)
-X = np.random.randint(-10,10,size=(100,4))
-Y = np.array([distance(*x) for x in X])
-print X
-print Y
-cmin = np.inf
-repmin = deepcopy(rep)
-t = time()
-n = 0
-for starts in range(100000):
-	if starts % 1000 == 0 and starts != 0: print starts,n/(time()-t)
 	rep = init(4)
-	for i in range(30):
-		try:
-			rep = neighbor(rep)
-			c = cost(X,Y,rep)
-			if c < cmin:
-				cmin = deepcopy(c)
-				repmin = deepcopy(rep)
-			if c == 0:
-				if len(rep['code']) < len(repmin['code']):
+	X = np.random.randint(-10,10,size=(100,4))
+	Y = np.array([distance(*x) for x in X])
+	print X
+	print Y
+	cmin = np.inf
+	repmin = deepcopy(rep)
+	t = time()
+	n = 0
+	for starts in range(100000):
+		if starts % 1000 == 0 and starts != 0: print starts,n/(time()-t)
+		rep = init(4)
+		for i in range(30):
+			try:
+				rep = neighbor(rep)
+				c = cost(X,Y,rep)
+				if c < cmin:
+					cmin = deepcopy(c)
 					repmin = deepcopy(rep)
-		except:
-			pass
-		n += 1
-print cmin
-print repmin
-print render(repmin)
+				if c == 0:
+					if len(rep['code']) < len(repmin['code']):
+						repmin = deepcopy(rep)
+			except:
+				pass
+			n += 1
+	print cmin
+	print repmin
+	print render(repmin)
+
+	
+if __name__ == "__main__":
+	main()
 
 # choices = [delete_line,gen_line]
 
