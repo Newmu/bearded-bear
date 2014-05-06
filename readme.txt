@@ -1,106 +1,110 @@
-1) Alec Radford and Amanda Lee
+ file with a description of what you're done, 
+  a description of how to compile/create your system, and pointers to anything that I positively absolutely have to look at to appreciate how great you are.
 
-2) It's python, numpy is the only current dependency
+Amanda Lee
+Amanda.Lee@students.olin.edu
 
-3) The current example will create random functions of the form:
-y = mx + b and find the parameters via tabu search
+Alec Radford
+Alec.Radford@students.olin.edu
 
-4) Example output from a run on my computer:
 
-Current function: y = -6674x + 3135
+WHAT WE DID:
+In this folder there are a variety of programs that all return a functional model of inputted data.
+We have simple programs such as "mult.py" and "mult_and_add.py" that use modified search algorithms to find functions that will fit the given data.
+"polynomial.py" uses linear regression to learn polynomial function up to a degree of three. 
+"separation.py" and "derivative.py" deal with data sets that would best be represented with piecewise functions. "separation.py" does a brute force search of all possible separation points in order to find where the function should be split. "derivative.py" roughly calculated the derivative the piecewise function to find the separation point. 
 
-SOLUTION FOUND
-Found slope -6674
-Found offset 3135
-In 185317 checks
-In 4.64 seconds
-Efficiency Ratio: 539.62
+The main part of our project is a program generator that will return functions that best represent either quadratic or distance functions with random parameters. This is done by starting with a general function, evaluating the error, making a small change to the function, and determining whether the error is more or less than before. 
+To compile the main part of our project (the program generator) simply run "hcwr_pg.py". 
 
-Current function: y = -944x + -9428
 
-SOLUTION FOUND
-Found slope -944
-Found offset -9428
-In 108636 checks
-In 2.70 seconds
-Efficiency Ratio: 920.51
+SAMPLE EXECUTION
+Below is a sample execution of our program generator.
 
-Current function: y = 3220x + -8095
+Amandas-MacBook-Pro:bearded-bear alee1$ /usr/bin/python2.7 hcwr_pg.py
+Learning quadratic function
+0 evals, new min mean error 180.9400
+2 evals, new min mean error 179.5700
+241 evals, new min mean error 174.7000
+438 evals, new min mean error 174.1400
+453 evals, new min mean error 28.1300
+1567 evals, new min mean error 27.6900
+1859 evals, new min mean error 5.6100
+10000 evals 1606 per second 5.6100 best mean error
+20000 evals 1596 per second 5.6100 best mean error
+30000 evals 1557 per second 5.6100 best mean error
+40000 evals 1394 per second 5.6100 best mean error
+48017 evals, new min mean error 0.0000
 
-SOLUTION FOUND
-Found slope 3220
-Found offset -8095
-In 162133 checks
-In 4.06 seconds
-Efficiency Ratio: 616.78
+Learned program in 48018 evaluations taking 39 seconds
 
-Current function: y = -5135x + 3848
+Learning distance function
+0 evals, new min mean error 12.3694
+13 evals, new min mean error 12.1851
+14 evals, new min mean error 10.6075
+202 evals, new min mean error 10.6057
+1495 evals, new min mean error 10.3967
+2226 evals, new min mean error 6.6273
+4436 evals, new min mean error 5.4170
+10000 evals 1283 per second 5.4170 best mean error
+20000 evals 1313 per second 5.4170 best mean error
+30000 evals 1352 per second 5.4170 best mean error
+40000 evals 1371 per second 5.4170 best mean error
+50000 evals 1365 per second 5.4170 best mean error
+60000 evals 1368 per second 5.4170 best mean error
+70000 evals 1357 per second 5.4170 best mean error
+80000 evals 1356 per second 5.4170 best mean error
+90000 evals 1357 per second 5.4170 best mean error
+100000 evals 1361 per second 5.4170 best mean error
+110000 evals 1364 per second 5.4170 best mean error
+115944 evals, new min mean error 3.7475
+120000 evals 1367 per second 3.7475 best mean error
+130000 evals 1363 per second 3.7475 best mean error
+140000 evals 1289 per second 3.7475 best mean error
+147800 evals, new min mean error 3.2024
+150000 evals 1279 per second 3.2024 best mean error
+154002 evals, new min mean error 3.1162
+157464 evals, new min mean error 2.7729
+160000 evals 1262 per second 2.7729 best mean error
+162477 evals, new min mean error 0.0000
 
-SOLUTION FOUND
-Found slope -5135
-Found offset 3848
-In 159799 checks
-In 3.99 seconds
-Efficiency Ratio: 625.79
+Learned program in 162478 evaluations taking 129 seconds
 
-Current function: y = -7054x + 9759
+General Quadratic Function:
 
-SOLUTION FOUND
-Found slope -7054
-Found offset 9759
-In 267105 checks
-In 6.85 seconds
-Efficiency Ratio: 374.38
+def f(a,b,c,d):
+    e,f,g,h,i,j,k,l,m,n,o,p,q = a,c,c,a,c,d,a,d,c,b,a,d,b
+    k = h * h
+    l = e * c
 
-Current function: y = -4993x + 6594
+    i = b * k
+    i = i + p
 
-SOLUTION FOUND
-Found slope -4993
-Found offset 6594
-In 186916 checks
-In 4.76 seconds
-Efficiency Ratio: 535.00
 
-Current function: y = -9568x + -5027
 
-SOLUTION FOUND
-Found slope -9568
-Found offset -5027
-In 160408 checks
-In 4.05 seconds
-Efficiency Ratio: 623.41
 
-Current function: y = 4026x + -6664
 
-SOLUTION FOUND
-Found slope 4026
-Found offset -6664
-In 164526 checks
-In 4.15 seconds
-Efficiency Ratio: 607.81
+    o = n - i
 
-Current function: y = 7573x + -5372
+    i = i + l
+    return i
 
-SOLUTION FOUND
-Found slope 7573
-Found offset -5372
-In 230214 checks
-In 5.85 seconds
-Efficiency Ratio: 434.38
 
-Current function: y = -9951x + 4886
+Euclidean Distance Function:
 
-SOLUTION FOUND
-Found slope -9951
-Found offset 4886
-In 279882 checks
-In 7.10 seconds
-Efficiency Ratio: 357.29
+def f(a,b,c,d):
+    e,f,g,h,i,j,k,l,m,n,o,p,q = b,b,d,a,b,a,a,b,a,b,c,d,a
+    p = d - l
+    o = q - c
+    p = np.square(p)
+    e = n + j
+    j = c - m
+    q = np.square(o)
+    p = q + p
+    g = a + d
+    h = np.sqrt(p)
+    l = np.square(i)
+    l = e + j
 
-5) Tabu search is a really elegant augmentation of our original local random stochastic search code which provides a convergence garuntee (in worst case it degenerates to brute force search) and is a great optimization heuristic to get out of local minimum which was the problem we encountered before.
-
-The way it works is it remembers its history of hypothesis it has visited before and will never choose to transition to a hypothesis it has visited before. Thus, whenever a local minimum is encountered, it will visit all locations in that minima thus "filling it" and spilling out to visit other areas that it has not visited before.
-
-The efficiency ratio is a number of hypothesis evalutations tabu search took to find the underlying function compared to brute force search of the current function space. Tabu search can work on an unbounded space, but I'm currently generating functions on a bounded domain of -10k to 10k for time reasons. The average efficiency ratio is 500 right now which should only go up as the functions we can learn become more complex and the search space begins to exponentially grow.
-
-6) We now need to expand the complexity of functions to be learned and start looking into alternative ways to learn them besides search solutions.
+    f = o * a
+    return h
