@@ -2,11 +2,11 @@ import numpy as np
 from time import time,sleep
 from matplotlib import pyplot as plt
 
-def f(x):
-	return -1*x*scaler + round(0.1*scaler)
-
 # def f(x):
-	# return -10*x + round(0.1*10)
+# 	return -1*x*scaler + round(0.1*scaler)
+
+def f(x):
+	return -10*x + 10
 
 def h(x,m,b):
 	return m*x + b
@@ -16,14 +16,15 @@ def cost(a,b):
 
 def learn(x,f):
 	y = f(x)
-	m = np.random.randint(-2,2)
-	b = np.random.randint(-2,2)
+	#m = np.random.randint(-2,2)
+	#b = np.random.randint(-2,2)
+	m,b = 0,0
 	err = 1
 	i = 0
 	while err != 0:
 		sign,err = cost(y,h(x,m,b))
 		# if i % 1000 == 0:
-		# 	print i,sign,err,m,b,np.sqrt(err)
+		print i,sign,err,m,b,np.sqrt(err)
 		adj = np.sqrt(err)/50.
 		adj = np.clip(adj,2,10000)
 		# if adj < 2:
@@ -41,7 +42,8 @@ def learn(x,f):
 			b += np.random.randint(-adj,adj)
 		i += 1
 		# sleep(0.01)			
-	return i
+	#return i
+	print m, b
 
 def steps_to_converge(x,n):
 	global scaler
@@ -55,13 +57,19 @@ def steps_to_converge(x,n):
 		steps.append(step)
 	return np.array(scalers),np.array(steps)
 
+def main():
+	x = np.arange(100)
+	learn(x,f)
+
+if __name__ == "__main__":
+	main()
+
+
+
+# global scaler
+# scaler = 1.
 # x = np.arange(100)
 # learn(x,f)
-
-global scaler
-scaler = 1.
-x = np.arange(100)
-# learn(x,f)
-X,Y = steps_to_converge(x,8)
-plt.plot(X,Y)
-plt.show()
+# X,Y = steps_to_converge(x,8)
+# plt.plot(X,Y)
+# plt.show()

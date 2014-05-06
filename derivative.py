@@ -29,33 +29,37 @@ def getY (start, Y, upLim, lowLim):
 	YAll = np.concatenate((f(XA, *pA), f(XB, *pB)))
 	return YAll
 
-upperLim = 100
-lowerLim = -100
+def main():
+	upperLim = 100
+	lowerLim = -100
 
-#initial function
-temp = np.random.randint(lowerLim + 2, upperLim - 2)
-X1 = np.arange(lowerLim,temp)
-X2 = np.arange(temp,upperLim)
-h1 = np.random.randint(-1000,1000,size=4)
-h2 = np.random.randint(-1000,1000,size=4)
-Y = np.concatenate((f(X1,*h1),f(X2,*h2)))
-X = aug(np.arange(lowerLim,upperLim))
-p = LinearRegression(X,Y)
+	#initial function
+	temp = np.random.randint(lowerLim + 2, upperLim - 2)
+	X1 = np.arange(lowerLim,temp)
+	X2 = np.arange(temp,upperLim)
+	h1 = np.random.randint(-1000,1000,size=4)
+	h2 = np.random.randint(-1000,1000,size=4)
+	Y = np.concatenate((f(X1,*h1),f(X2,*h2)))
+	X = aug(np.arange(lowerLim,upperLim))
+	p = LinearRegression(X,Y)
 
 
 
-print temp
-Yy = derivative(Y)
-Yyy = derivative (Yy)
-Xxxx = np.arange(-97, 97)
-Yyyy = np.absolute(derivative (Yyy))
+	print temp
+	Yy = derivative(Y)
+	Yyy = derivative (Yy)
+	Xxxx = np.arange(-97, 97)
+	Yyyy = np.absolute(derivative (Yyy))
+	Yyyyguess = np.gradient(Y)
+	point = X[np.argmax(Y)]
+	print Yyyyguess
+	Yfinal = getY (point, Yyyyguess, upperLim, lowerLim)
 
-point = Xxxx[np.argmax(Yyyy)]
+	print point
+	plt.plot(Xxxx, Yyyy, c = 'r')
+	plt.plot(X[:,-2],Y,c='b')
+	#plt.plot(X[:,-2],Yfinal,c='r')
+	plt.show()
 
-Yfinal = getY (point, Y, upperLim, lowerLim)
-
-print point
-#plt.plot(Xxxx, Yyyy, c = 'r')
-plt.plot(X[:,-2],Y,c='b')
-plt.plot(X[:,-2],Yfinal,c='r')
-plt.show()
+if __name__ == "__main__":
+	main()
